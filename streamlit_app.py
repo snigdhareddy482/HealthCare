@@ -15,6 +15,8 @@ import sklearn.linear_model
 import sklearn.tree
 import sklearn.ensemble
 import sklearn.neighbors
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
 
 # --- Comprehensive Legacy Model Support ---
 # These patches allow models trained on older scikit-learn/joblib versions (circa 2018-2020)
@@ -110,6 +112,42 @@ def load_models():
 
 models = load_models()
 
+# Scaler Helpers
+@st.cache_resource
+def get_heart_scaler():
+    # Replicates the preprocessing in heart.py
+    try:
+        df = pd.read_csv('heart.csv')
+        # Apply Log Transform as done in training
+        df["trestbps"] = np.log(df["trestbps"])
+        df["chol"] = np.log(df["chol"])
+        # Drop columns not used in training features
+        # Used: age,sex,cp,trestbps,chol,restecg,thalach,exang,oldpeak,slope,thal
+        df = df.drop(["fbs", "ca", "target"], axis=1)
+        sc = StandardScaler()
+        sc.fit(df)
+        return sc
+    except Exception as e:
+        # If heart.csv is missing or error, return None (fallback to raw)
+        return None
+
+class ManualScaler:
+    def __init__(self, mean, std):
+        self.mean = np.array(mean)
+        self.scale = np.array(std)
+    
+    def transform(self, X):
+        return (np.array(X) - self.mean) / self.scale
+
+@st.cache_resource
+def get_liver_scaler():
+    # Statistical averages from Indian Liver Patient Dataset
+    # Features: Age, Gender, TB, DB, Alkphos, Sgpt, Sgot, TP, ALB, A/G Ratio
+    # Gender encoded as: Male=0, Female=1
+    means = [44.75, 0.2436, 3.3, 1.49, 290.6, 80.7, 109.9, 6.48, 3.14, 0.95]
+    stds = [16.19, 0.4292, 6.21, 2.81, 242.94, 182.62, 288.92, 1.09, 0.80, 0.32]
+    return ManualScaler(means, stds)
+
 # Prediction Functions
 def predict_malaria(img, model):
     img = img.resize((50, 50))
@@ -127,9 +165,19 @@ def predict_pneumonia(img, model):
     predicted = model.predict(img_array)
     return predicted
 
-def predict_structured(model, input_list):
-    to_predict = np.array(input_list).reshape(1, len(input_list))
-    result = model.predict(to_predict)
+def predict_structured(model, input_list, scaler=None):
+    # Reshape input
+    input_array = np.array(input_list).reshape(1, len(input_list))
+    
+    # Scale if scaler is provided
+    if scaler:
+        try:
+             input_array = scaler.transform(input_array)
+        except Exception as e:
+             # In case of mismatch, print error and proceed with raw (risky but better than crash)
+             print(f"Scaler error: {e}")
+    
+    result = model.predict(input_array)
     return result[0]
 
 # Sidebar
@@ -213,11 +261,23 @@ elif app_mode == "Heart Disease":
             thal = st.selectbox("Thalassemia", options=[(1, "Normal"), (2, "Fixed Defect"), (3, "Reversable Defect")], format_func=lambda x: f"{x[0]} - {x[1]}")
 
     if st.button("Predict Heart Disease Risk"):
-        input_data = [age, sex[1], cp[0], trestbps, chol, restecg, thalach, exang[1], oldpeak, slope, thal[0]]
-        prediction = predict_structured(models['heart'], input_data)
+        # Preprocessing: Log transform specific columns (trestbps, chol)
+        # Matches heart.py logic: data["trestbps"]=np.log(data["trestbps"]); data["chol"]=np.log(data["chol"])
+        
+        # Safe log (avoid log(0) or negative)
+        trestbps_log = np.log(trestbps) if trestbps > 0 else 0
+        chol_log = np.log(chol) if chol > 0 else 0
+        
+        # Original Input list (indices 0-10)
+        # 0:age, 1:sex, 2:cp, 3:trestbps(log), 4:chol(log), 5:restecg, 6:thalach, 7:exang, 8:oldpeak, 9:slope, 10:thal
+        input_data = [age, sex[1], cp[0], trestbps_log, chol_log, restecg, thalach, exang[1], oldpeak, slope, thal[0]]
+        
+        scaler = get_heart_scaler()
+        prediction = predict_structured(models['heart'], input_data, scaler=scaler)
         
         if prediction == 1:
             st.markdown('<div class="result-box danger">Heart Disease Risk Detected</div>', unsafe_allow_html=True)
+            st.warning("Prediction based on scaled data matching specific medical thresholds.")
         else:
             st.markdown('<div class="result-box safe">Healthy Heart Status</div>', unsafe_allow_html=True)
             st.balloons()
@@ -272,10 +332,13 @@ elif app_mode == "Liver Disease":
 
     if st.button("Predict Liver Disease"):
         input_data = [agel, gen[1], tb, db, ap, aa1, aa2, tp, alb, ag_ratio]
-        prediction = predict_structured(models['liver'], input_data)
+        
+        scaler = get_liver_scaler()
+        prediction = predict_structured(models['liver'], input_data, scaler=scaler)
         
         if prediction == 1:
             st.markdown('<div class="result-box danger">Liver Disease Detected</div>', unsafe_allow_html=True)
+            st.warning("Prediction based on statistical averages from the Indian Liver Patient Dataset.")
         else:
             st.markdown('<div class="result-box safe">Healthy Liver Status</div>', unsafe_allow_html=True)
             st.balloons()
