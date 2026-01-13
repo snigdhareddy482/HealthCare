@@ -262,7 +262,7 @@ if app_mode == "Home":
         </ul>
     </div>
     """, unsafe_allow_html=True)
-    st.image("https://cdn.activestate.com/wp-content/uploads/2018/10/machine-learning-healthcare-blog-hero-1200x799.jpg", use_container_width=True)
+    st.image("https://cdn.activestate.com/wp-content/uploads/2018/10/machine-learning-healthcare-blog-hero-1200x799.jpg", width="stretch")
 
 elif app_mode == "Diabetes":
     st.header("Diabetes Prediction")
@@ -299,11 +299,11 @@ elif app_mode == "Diabetes":
         
         with col1:
             # Glucose Gauge (Normal: ~70-140 mg/dL for random/fasting mix)
-            st.plotly_chart(plot_health_gauge(glucose, "Glucose Level", 0, 300, (70, 140)), use_container_width=True)
+            st.plotly_chart(plot_health_gauge(glucose, "Glucose Level", 0, 300, (70, 140)), width="stretch")
             
         with col2:
             # BMI Gauge (Normal: 18.5-25)
-            st.plotly_chart(plot_health_gauge(bmi, "BMI Index", 10, 50, (18.5, 25)), use_container_width=True)
+            st.plotly_chart(plot_health_gauge(bmi, "BMI Index", 10, 50, (18.5, 25)), width="stretch")
             
         if bmi > 25:
              st.info("💡 **Tip**: Your BMI indicates you might be overweight. Regular exercise can help lower risk.")
@@ -359,11 +359,11 @@ elif app_mode == "Heart Disease":
         
         with col1:
             # BP Gauge (Normal: <120 systolic. Warning up to 140)
-            st.plotly_chart(plot_health_gauge(trestbps, "Resting Blood Pressure", 80, 200, (90, 120)), use_container_width=True)
+            st.plotly_chart(plot_health_gauge(trestbps, "Resting Blood Pressure", 80, 200, (90, 120)), width="stretch")
             
         with col2:
             # Cholesterol Gauge (Normal: <200)
-            st.plotly_chart(plot_health_gauge(chol, "Cholesterol", 100, 400, (125, 200)), use_container_width=True)
+            st.plotly_chart(plot_health_gauge(chol, "Cholesterol", 100, 400, (125, 200)), width="stretch")
             
         if trestbps > 130:
              st.info("💡 **Tip**: Elevated blood pressure significantly increases heart strain.")
