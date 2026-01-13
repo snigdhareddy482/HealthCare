@@ -68,6 +68,7 @@ st.markdown("""
         border-radius: 20px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         margin-bottom: 2rem;
+        color: #31333F;
     }
     h1, h2, h3 {
         color: #2c3e50;
