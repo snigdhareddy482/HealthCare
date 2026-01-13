@@ -12,4 +12,6 @@ pandas
 joblib
 streamlit
 tf-keras
+# Visualization
 plotly
+
