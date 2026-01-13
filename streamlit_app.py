@@ -179,6 +179,8 @@ def load_models():
     
     return models
 
+models = load_models()
+
 @st.cache_resource
 def get_liver_scaler():
     # Statistical averages from Indian Liver Patient Dataset
