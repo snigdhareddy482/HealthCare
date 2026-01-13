@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card mt-5">
+            <div class="card-header text-center">
+                <h3>Pneumonia Detection</h3>
+            </div>
+            <div class="card-body">
+                <p class="text-center">Upload a Chest X-Ray image to detect Pneumonia.</p>
+                <form action="/upload11" method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="image" class="form-label">Select Chest X-Ray</label>
+                        <input class="form-control" type="file" name="image" id="image" accept="image/*" required>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Predict</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-9">
+        <div class="card mt-5">
+            <div class="card-header text-center">
+                <h3>Kidney Disease Prediction</h3>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('result') }}" method="post">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="age" class="form-label">Age</label>
+                            <input type="number" step="any" class="form-control" name="age" id="age" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="bp" class="form-label">Blood Pressure</label>
+                            <input type="number" step="any" class="form-control" name="bp" id="bp" placeholder="mm Hg"
+                                required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="al" class="form-label">Albumin (0-5)</label>
+                            <input type="number" step="any" class="form-control" name="al" id="al" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="pcc" class="form-label">Pus Cell Clumps</label>
+                            <select class="form-control" name="pcc" id="pcc" required>
+                                <option value="1">Present</option>
+                                <option value="0">Not Present</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="bgr" class="form-label">Blood Glucose Random</label>
+                            <input type="number" step="any" class="form-control" name="bgr" id="bgr" placeholder="mg/dl"
+                                required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="bu" class="form-label">Blood Urea</label>
+                            <input type="number" step="any" class="form-control" name="bu" id="bu" placeholder="mg/dl"
+                                required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="sc" class="form-label">Serum Creatinine</label>
+                            <input type="number" step="any" class="form-control" name="sc" id="sc" placeholder="mg/dl"
+                                required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="hemo" class="form-label">Hemoglobin</label>
+                            <input type="number" step="any" class="form-control" name="hemo" id="hemo" placeholder="gms"
+                                required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="pcv" class="form-label">Packed Cell Volume</label>
+                            <input type="number" step="any" class="form-control" name="pcv" id="pcv" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="htn" class="form-label">Hypertension</label>
+                            <select class="form-control" name="htn" id="htn" required>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="dm" class="form-label">Diabetes Mellitus</label>
+                            <select class="form-control" name="dm" id="dm" required>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="appet" class="form-label">Appetite</label>
+                            <select class="form-control" name="appet" id="appet" required>
+                                <option value="1">Good</option>
+                                <option value="0">Poor</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary">Predict</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero">
+    <h1>Welcome to Health Care Predictor</h1>
+    <p>Advanced AI-driven tools for early disease detection and health monitoring.</p>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5 class="card-title">Diabetes Prediction</h5>
+                <p class="card-text">Check the probability of diabetes based on diagnostic measures.</p>
+                <a href="{{ url_for('diabetes') }}" class="btn btn-primary">Predict Now</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5 class="card-title">Heart Disease</h5>
+                <p class="card-text">Assess heart health risks using key indicators.</p>
+                <a href="{{ url_for('heart') }}" class="btn btn-primary">Predict Now</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5 class="card-title">Kidney Disease</h5>
+                <p class="card-text">Evaluate kidney function and potential chronic conditions.</p>
+                <a href="{{ url_for('kidney') }}" class="btn btn-primary">Predict Now</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5 class="card-title">Liver Disease</h5>
+                <p class="card-text">Analyze liver function tests for potential disorders.</p>
+                <a href="{{ url_for('liver') }}" class="btn btn-primary">Predict Now</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5 class="card-title">Cancer Prediction</h5>
+                <p class="card-text">Breast cancer detection using cell nuclei characteristics.</p>
+                <a href="{{ url_for('cancer') }}" class="btn btn-primary">Predict Now</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5 class="card-title">Malaria Detection</h5>
+                <p class="card-text">Upload cell images to detect parasitic infections.</p>
+                <a href="{{ url_for('malaria') }}" class="btn btn-primary">Detect Now</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <h5 class="card-title">Pneumonia Detection</h5>
+                <p class="card-text">Analyze chest X-rays for signs of pneumonia.</p>
+                <a href="{{ url_for('pneumonia') }}" class="btn btn-primary">Detect Now</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

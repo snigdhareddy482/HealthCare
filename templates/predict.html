@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card mt-5">
+            <div class="card-header text-center">
+                <h3>Malaria Prediction Result</h3>
+            </div>
+            <div class="card-body text-center">
+                <img src="{{ url_for('send_file', filename=image_file_name) }}" alt="User Image" class="img-fluid mb-3"
+                    style="max-height: 300px; border-radius: 8px;">
+
+                <h4>Prediction: {{ label }}</h4>
+                <p>Accuracy: {{ accuracy }}%</p>
+
+                <a href="{{ url_for('malaria') }}" class="btn btn-secondary mt-3">Try Another</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

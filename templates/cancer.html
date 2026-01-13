@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card mt-5">
+            <div class="card-header text-center">
+                <h3>Breast Cancer Prediction</h3>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('result') }}" method="post">
+
+                    <h5 class="mb-3 text-secondary">Mean Values</h5>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Radius Mean</label>
+                            <input type="number" step="any" class="form-control" name="radius_mean" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Texture Mean</label>
+                            <input type="number" step="any" class="form-control" name="texture_mean" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Perimeter Mean</label>
+                            <input type="number" step="any" class="form-control" name="perimeter_mean" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Area Mean</label>
+                            <input type="number" step="any" class="form-control" name="area_mean" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Smoothness Mean</label>
+                            <input type="number" step="any" class="form-control" name="smoothness_mean" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Compactness Mean</label>
+                            <input type="number" step="any" class="form-control" name="compactness_mean" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Concavity Mean</label>
+                            <input type="number" step="any" class="form-control" name="concavity_mean" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Concave Points Mean</label>
+                            <input type="number" step="any" class="form-control" name="concave_points_mean" required>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Symmetry Mean</label>
+                            <input type="number" step="any" class="form-control" name="symmetry_mean" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Fractal Dim Mean</label>
+                            <input type="number" step="any" class="form-control" name="fractal_dimension_mean" required>
+                        </div>
+                    </div>
+
+                    <h5 class="mb-3 text-secondary">Standard Error (SE) Values</h5>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Radius SE</label>
+                            <input type="number" step="any" class="form-control" name="radius_se" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Texture SE</label>
+                            <input type="number" step="any" class="form-control" name="texture_se" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Perimeter SE</label>
+                            <input type="number" step="any" class="form-control" name="perimeter_se" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Area SE</label>
+                            <input type="number" step="any" class="form-control" name="area_se" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Smoothness SE</label>
+                            <input type="number" step="any" class="form-control" name="smoothness_se" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Compactness SE</label>
+                            <input type="number" step="any" class="form-control" name="compactness_se" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Concavity SE</label>
+                            <input type="number" step="any" class="form-control" name="concavity_se" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Concave Points SE</label>
+                            <input type="number" step="any" class="form-control" name="concave_points_se" required>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Symmetry SE</label>
+                            <input type="number" step="any" class="form-control" name="symmetry_se" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Fractal Dim SE</label>
+                            <input type="number" step="any" class="form-control" name="fractal_dimension_se" required>
+                        </div>
+                    </div>
+
+                    <h5 class="mb-3 text-secondary">Worst Values</h5>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Radius Worst</label>
+                            <input type="number" step="any" class="form-control" name="radius_worst" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Texture Worst</label>
+                            <input type="number" step="any" class="form-control" name="texture_worst" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Perimeter Worst</label>
+                            <input type="number" step="any" class="form-control" name="perimeter_worst" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Area Worst</label>
+                            <input type="number" step="any" class="form-control" name="area_worst" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Smoothness Worst</label>
+                            <input type="number" step="any" class="form-control" name="smoothness_worst" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Compactness Worst</label>
+                            <input type="number" step="any" class="form-control" name="compactness_worst" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Concavity Worst</label>
+                            <input type="number" step="any" class="form-control" name="concavity_worst" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Concave Points Worst</label>
+                            <input type="number" step="any" class="form-control" name="concave_points_worst" required>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Symmetry Worst</label>
+                            <input type="number" step="any" class="form-control" name="symmetry_worst" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">Fractal Dim Worst</label>
+                            <input type="number" step="any" class="form-control" name="fractal_dimension_worst"
+                                required>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary">Predict</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

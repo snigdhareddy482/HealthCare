@@ -1,287 +1,224 @@
-#Important Modules
-from flask import Flask,render_template, url_for ,flash , redirect
-#from forms import RegistrationForm, LoginForm
-from sklearn.externals import joblib
-from flask import request
+# Important Modules
+from flask import Flask, render_template, url_for, flash, redirect, request, send_from_directory
+import joblib
 import numpy as np
-import tensorflow
-#from keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Input, Flatten, SeparableConv2D
-#from flask_sqlalchemy import SQLAlchemy
-#from model_class import DiabetesCheck, CancerCheck
-
-#from tensorflow.keras.models import Sequential
-#from tensorflow.keras.layers import Conv2D, MaxPooling2D, Dense, Dropout, Input, Flatten, SeparableConv2D
-#from tensorflow.keras.layers import GlobalMaxPooling2D, Activation
-#from tensorflow.keras.layers.normalization import BatchNormalization
-#from tensorflow.keras.layers.merge import Concatenate
-#from tensorflow.keras.models import Model
-
 import os
-from flask import send_from_directory
-from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing import image
-import tensorflow as tf
+from tensorflow.keras.models import load_model # type: ignore
+from tensorflow.keras.preprocessing import image # type: ignore
 
-#from this import SQLAlchemy
-app=Flask(__name__,template_folder='template')
+app = Flask(__name__)
 
-
-
-# RELATED TO THE SQL DATABASE
+# Configuration
 app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
-#app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///site.db"
-#db=SQLAlchemy(app)
-
-#from model import User,Post
-
-#//////////////////////////////////////////////////////////
-
-dir_path = os.path.dirname(os.path.realpath(__file__))
-# UPLOAD_FOLDER = dir_path + '/uploads'
-# STATIC_FOLDER = dir_path + '/static'
 UPLOAD_FOLDER = 'uploads'
 STATIC_FOLDER = 'static'
 
-#graph = tf.get_default_graph()
-#with graph.as_default():;
-from tensorflow.keras.models import load_model
-model = load_model('model111.h5')
-model222=load_model("my_model.h5")
+# Ensure upload folder exists
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 
-#FOR THE FIRST MODEL
+# Load Models
+# Using global variables for models. Note: In production, consider lazy loading or a serving infrastructure.
+try:
+    print("Loading models...")
+    model_malaria = load_model('model111.h5')
+    model_pneumonia = load_model('my_model.h5')
+    
+    # Models for structured data (Heart, Diabetes, etc.)
+    # These rely on joblib for sklearn models
+    model_diabetes = joblib.load("model1")
+    model_cancer = joblib.load("model")
+    model_kidney = joblib.load("model3")
+    model_liver = joblib.load("model4")
+    model_heart = joblib.load("model2")
+    print("Models loaded successfully.")
+except Exception as e:
+    print(f"Error loading models: {e}")
+    # Continue implementation to allow debugging, but predictions will fail
 
-# call model to predict an image
-def api(full_path):
-    data = image.load_img(full_path, target_size=(50, 50, 3))
-    data = np.expand_dims(data, axis=0)
-    data = data * 1.0 / 255
 
-    #with graph.as_default():
-    predicted = model.predict(data)
+# Malaria Prediction
+def predict_malaria(full_path):
+    img = image.load_img(full_path, target_size=(50, 50, 3))
+    img_array = image.img_to_array(img)
+    img_array = np.expand_dims(img_array, axis=0) # Add batch dimension
+    img_array = img_array / 255.0 # Normalize
+
+    predicted = model_malaria.predict(img_array)
     return predicted
-#FOR THE SECOND MODEL
-def api1(full_path):
-    data = image.load_img(full_path, target_size=(64, 64, 3))
-    data = np.expand_dims(data, axis=0)
-    data = data * 1.0 / 255
 
-    #with graph.as_default():
-    predicted = model222.predict(data)
+# Pneumonia Prediction
+def predict_pneumonia(full_path):
+    img = image.load_img(full_path, target_size=(64, 64, 3))
+    img_array = image.img_to_array(img)
+    img_array = np.expand_dims(img_array, axis=0)
+    img_array = img_array / 255.0
+
+    predicted = model_pneumonia.predict(img_array)
     return predicted
 
 
-# home page
-
-#@app.route('/')
-#def home():
- #  return render_template('index.html')
-
-
-# procesing uploaded file and predict it
-@app.route('/upload', methods=['POST','GET'])
-def upload_file():
-
-    if request.method == 'GET':
-        return render_template('index.html')
+# Structured Data Prediction
+def predict_structured(to_predict_list, size):
+    to_predict = np.array(to_predict_list).reshape(1, size)
+    
+    if size == 8: # Diabetes
+        result = model_diabetes.predict(to_predict)
+    elif size == 30: # Cancer
+        result = model_cancer.predict(to_predict)
+    elif size == 12: # Kidney
+        result = model_kidney.predict(to_predict)
+    elif size == 10: # Liver
+        result = model_liver.predict(to_predict)
+    elif size == 11: # Heart
+        result = model_heart.predict(to_predict)
     else:
-        try:
-            file = request.files['image']
-            full_name = os.path.join(UPLOAD_FOLDER, file.filename)
-            file.save(full_name)
+        return None
 
-            indices = {0: 'PARASITIC', 1: 'Uninfected', 2: 'Invasive carcinomar', 3: 'Normal'}
-            result = api(full_name)
-            print(result)
+    return result[0]
 
-            predicted_class = np.asscalar(np.argmax(result, axis=1))
-            accuracy = round(result[0][predicted_class] * 100, 2)
-            label = indices[predicted_class]
-            return render_template('predict.html', image_file_name = file.filename, label = label, accuracy = accuracy)
-        except:
-            flash("Please select the image first !!", "danger")      
-            return redirect(url_for("Malaria"))
-
-@app.route('/upload11', methods=['POST','GET'])
-def upload11_file():
-
-    if request.method == 'GET':
-        return render_template('index2.html')
-    else:
-        try:
-            file = request.files['image']
-            full_name = os.path.join(UPLOAD_FOLDER, file.filename)
-            file.save(full_name)
-            indices = {0: 'Normal', 1: 'Pneumonia'}
-            result = api1(full_name)
-            if(result>50):
-                label= indices[1]
-                accuracy= result
-            else:
-                label= indices[0]
-                accuracy= 100-result
-            return render_template('predict1.html', image_file_name = file.filename, label = label, accuracy = accuracy)
-        except:
-            flash("Please select the image first !!", "danger")      
-            return redirect(url_for("Pneumonia"))
-
-
-@app.route('/uploads/<filename>')
-def send_file(filename):
-    return send_from_directory(UPLOAD_FOLDER, filename)
-
-
-
-
-
-
-#//////////////////////////////////////////////
-
-#app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///site.db"
-
-#db=SQLAlchemy(app)
-
-#class User(db.Model):
-##   username = db.Column(db.String(20), unique=True, nullable=False)
- #   email = db.Column(db.String(120), unique=True, nullable=False)
-    #image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
- #   password = db.Column(db.String(60), nullable=False)
-    #posts = db.relationship('Post', backref='author', lazy=True)
-
-    #def __repr__(self):
-    #   return f"User('{self.username}', '{self.email}', '{self.image_file}')"
-
+# --- Routes ---
 
 @app.route("/")
-
 @app.route("/home")
 def home():
     return render_template("home.html")
- 
-
 
 @app.route("/about")
 def about():
     return render_template("about.html")
 
-
+# Disease Page Routes
 @app.route("/cancer")
 def cancer():
     return render_template("cancer.html")
 
-
 @app.route("/diabetes")
 def diabetes():
-    #if form.validate_on_submit():
     return render_template("diabetes.html")
 
 @app.route("/heart")
 def heart():
     return render_template("heart.html")
 
-
 @app.route("/liver")
 def liver():
-    #if form.validate_on_submit():
     return render_template("liver.html")
 
 @app.route("/kidney")
 def kidney():
-    #if form.validate_on_submit():
     return render_template("kidney.html")
 
-@app.route("/Malaria")
-def Malaria():
+@app.route("/malaria")
+def malaria():
     return render_template("index.html")
 
-@app.route("/Pneumonia")
-def Pneumonia():
+@app.route("/pneumonia")
+def pneumonia():
     return render_template("index2.html")
 
 
-"""
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    form =RegistrationForm()
-    if form.validate_on_submit():
-        #flash("Account created for {form.username.data}!".format("success"))
-        flash("Account created","success")      
-        return redirect(url_for("home"))
-    return render_template("register.html", title ="Register",form=form )
-@app.route("/login", methods=["POST","GET"])
-def login():
-    form =LoginForm()
-    if form.validate_on_submit():
-        #if form.email.data =="sho" and form.password.data=="password":
-        flash("You Have Logged in !","success")
-        return redirect(url_for("home"))
-    #else:
-    #   flash("Login Unsuccessful. Please check username and password","danger")
-    return render_template("login.html", title ="Login",form=form )
-def ValuePredictor1(to_predict_list):
-    to_predict = np.array(to_predict_list).reshape(1,30)
-    loaded_model = joblib.load("model")
-    result = loaded_model.predict(to_predict)
-    return result[0]
-    
-@app.route('/result1',methods = ["GET","POST"])
-def result():
-    if request.method == 'POST':
-        to_predict_list = request.form.to_dict()
-        to_predict_list=list(to_predict_list.values())
-        to_predict_list = list(map(float, to_predict_list))
-        result = ValuePredictor(to_predict_list)
-        if int(result)==1:
-            prediction='cancer'
-        else:
-            prediction='Healthy'       
-    return(render_template("result.html", prediction=prediction))"""
-
-
-
-def ValuePredictor(to_predict_list, size):
-    to_predict = np.array(to_predict_list).reshape(1,size)
-    if(size==8):#Diabetes
-        loaded_model = joblib.load("model1")
-        result = loaded_model.predict(to_predict)
-    elif(size==30):#Cancer
-        loaded_model = joblib.load("model")
-        result = loaded_model.predict(to_predict)
-    elif(size==12):#Kidney
-        loaded_model = joblib.load("model3")
-        result = loaded_model.predict(to_predict)
-    elif(size==10):
-        loaded_model = joblib.load("model4")
-        result = loaded_model.predict(to_predict)
-    elif(size==11):#Heart
-        loaded_model = joblib.load("model2")
-        result =loaded_model.predict(to_predict)
-    return result[0]
-
-@app.route('/result',methods = ["POST"])
-def result():
-    if request.method == 'POST':
-        to_predict_list = request.form.to_dict()
-        to_predict_list=list(to_predict_list.values())
-        to_predict_list = list(map(float, to_predict_list))
-        if(len(to_predict_list)==30):#Cancer
-            result = ValuePredictor(to_predict_list,30)
-        elif(len(to_predict_list)==8):#Daiabtes
-            result = ValuePredictor(to_predict_list,8)
-        elif(len(to_predict_list)==12):
-            result = ValuePredictor(to_predict_list,12)
-        elif(len(to_predict_list)==11):
-            result = ValuePredictor(to_predict_list,11)
-            #if int(result)==1:
-            #   prediction ='diabetes'
-            #else:
-            #   prediction='Healthy' 
-        elif(len(to_predict_list)==10):
-            result = ValuePredictor(to_predict_list,10)
-    if(int(result)==1):
-        prediction='Sorry ! Suffering'
+# Malaria Prediction Endpoint
+@app.route('/upload', methods=['POST', 'GET'])
+def upload_file():
+    if request.method == 'GET':
+        return render_template('index.html')
     else:
-        prediction='Congrats ! you are Healthy' 
-    return(render_template("result.html", prediction=prediction))
+        try:
+            if 'image' not in request.files:
+                flash('No file part', 'danger')
+                return redirect(request.url)
+            
+            file = request.files['image']
+            if file.filename == '':
+                flash('No selected file', 'danger')
+                return redirect(request.url)
+
+            full_name = os.path.join(UPLOAD_FOLDER, file.filename)
+            file.save(full_name)
+
+            indices = {0: 'PARASITIC', 1: 'Uninfected', 2: 'Invasive carcinomar', 3: 'Normal'}
+            result = predict_malaria(full_name)
+            
+            # Modernize numpy usage: item() instead of asscalar
+            predicted_class = np.argmax(result, axis=1).item()
+            accuracy = round(result[0][predicted_class] * 100, 2)
+            label = indices[predicted_class]
+            
+            return render_template('predict.html', image_file_name=file.filename, label=label, accuracy=accuracy)
+        except Exception as e:
+            flash(f"Error: {e}", "danger")
+            return redirect(url_for("malaria"))
+
+# Pneumonia Prediction Endpoint
+@app.route('/upload11', methods=['POST', 'GET'])
+def upload11_file():
+    if request.method == 'GET':
+        return render_template('index2.html')
+    else:
+        try:
+             if 'image' not in request.files:
+                flash('No file part', 'danger')
+                return redirect(request.url)
+            
+             file = request.files['image']
+             if file.filename == '':
+                flash('No selected file', 'danger')
+                return redirect(request.url)
+
+             full_name = os.path.join(UPLOAD_FOLDER, file.filename)
+             file.save(full_name)
+             
+             indices = {0: 'Normal', 1: 'Pneumonia'}
+             result = predict_pneumonia(full_name)
+             
+             # Assuming binary classification output structure from original code logic
+             # The original code logic was a bit ambiguous: if(result>50)
+             # We'll assume result is a probability of class 1.
+             
+             # Safeguard: check shape.
+             pred_value = result[0][0] if result.ndim > 1 else result[0]
+             
+             if pred_value > 0.5: # Thresholding at 0.5 usually standard for sigmoid
+                 label = indices[1]
+                 accuracy = round(pred_value * 100, 2)
+             else:
+                 label = indices[0]
+                 accuracy = round((1 - pred_value) * 100, 2)
+                 
+             return render_template('predict1.html', image_file_name=file.filename, label=label, accuracy=accuracy)
+        except Exception as e:
+            flash(f"Error: {e}", "danger")
+            return redirect(url_for("pneumonia"))
+
+@app.route('/uploads/<filename>')
+def send_file(filename):
+    return send_from_directory(UPLOAD_FOLDER, filename)
+
+
+# Structured Data Prediction Endpoint
+@app.route('/result', methods=["POST"])
+def result():
+    if request.method == 'POST':
+        try:
+            to_predict_list = request.form.to_dict()
+            to_predict_list = list(to_predict_list.values())
+            to_predict_list = list(map(float, to_predict_list))
+            
+            result_val = predict_structured(to_predict_list, len(to_predict_list))
+            
+            if result_val is not None:
+                 if int(result_val) == 1:
+                     prediction = 'Sorry ! Suffering'
+                 else:
+                     prediction = 'Congrats ! you are Healthy'
+            else:
+                 prediction = "Error: Invalid input size"
+
+        except Exception as e:
+            prediction = f"Error during prediction: {e}"
+
+        return render_template("result.html", prediction=prediction)
 
 
 if __name__ == "__main__":

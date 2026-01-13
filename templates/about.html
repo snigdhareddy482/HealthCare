@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        About This Project
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">Health Care Prediction System</h5>
+        <p class="card-text">
+            This application uses Machine Learning and Deep Learning models to predict the likelihood of various
+            diseases.
+            It is designed to assist in early detection and awareness.
+        </p>
+        <p>
+            We currently support predictions for:
+        <ul>
+            <li>Diabetes</li>
+            <li>Heart Disease</li>
+            <li>Kidney Disease</li>
+            <li>Liver Disease</li>
+            <li>Breast Cancer</li>
+            <li>Malaria (Image based)</li>
+            <li>Pneumonia (Image based)</li>
+        </ul>
+        </p>
+        <p class="text-muted">
+            Disclaimer: This tool is for educational and informational purposes only. It is not a substitute for
+            professional medical advice, diagnosis, or treatment.
+        </p>
+    </div>
+</div>
+{% endblock %}

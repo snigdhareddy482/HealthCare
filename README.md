@@ -1,9 +1,10 @@
-# ML-MT-WebApp
-
-
 <img src="https://cdn.activestate.com/wp-content/uploads/2018/10/machine-learning-healthcare-blog-hero-1200x799.jpg" width="1100" height="300" />
-<p> This is one of major project of my undergraduate degree program.</p>
-<p>Here, I have developed a disease predicting web app which using the concept of machine learning makes predictions about various diseases like Malaria, Pneumonia, Diabetes etc.</p>
+
+# Healthcare AI Prediction Platform
+
+This is a comprehensive full-stack web application that leverages Machine Learning and Deep Learning to predict various diseases including Malaria, Pneumonia, Diabetes, Heart Disease, and more.
+
+**[View Detailed System Architecture](ARCHITECTURE.md)**
 
 <hr>
 <h3> Down below are the names of the various model files used:</h3>

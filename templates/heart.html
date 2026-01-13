@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card mt-5">
+            <div class="card-header text-center">
+                <h3>Heart Disease Prediction</h3>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('result') }}" method="post">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="age" class="form-label">Age</label>
+                            <input type="number" step="any" class="form-control" name="age" id="age" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="sex" class="form-label">Sex</label>
+                            <select class="form-control" name="sex" id="sex" required>
+                                <option value="1">Male</option>
+                                <option value="0">Female</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="cp" class="form-label">Chest Pain Type (0-3)</label>
+                            <input type="number" step="any" class="form-control" name="cp" id="cp"
+                                placeholder="0: Typical Angina, 1: Atyp. Angina, etc." required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="trestbps" class="form-label">Resting Blood Pressure</label>
+                            <input type="number" step="any" class="form-control" name="trestbps" id="trestbps"
+                                placeholder="mm Hg" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="chol" class="form-label">Serum Cholestoral</label>
+                            <input type="number" step="any" class="form-control" name="chol" id="chol"
+                                placeholder="mg/dl" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="restecg" class="form-label">Resting ECG Results (0-2)</label>
+                            <input type="number" step="any" class="form-control" name="restecg" id="restecg" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="thalach" class="form-label">Max Heart Rate</label>
+                            <input type="number" step="any" class="form-control" name="thalach" id="thalach" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="exang" class="form-label">Exercise Induced Angina</label>
+                            <select class="form-control" name="exang" id="exang" required>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="oldpeak" class="form-label">Oldpeak (ST depression)</label>
+                            <input type="number" step="any" class="form-control" name="oldpeak" id="oldpeak"
+                                placeholder="e.g. 1.2" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="slope" class="form-label">Slope of Peak Exercise ST (0-2)</label>
+                            <input type="number" step="any" class="form-control" name="slope" id="slope" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="thal" class="form-label">Thalassemia (0-3)</label>
+                            <input type="number" step="any" class="form-control" name="thal" id="thal"
+                                placeholder="1: Normal, 2: Fixed, 3: Reversable" required>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary">Predict</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
