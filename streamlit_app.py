@@ -233,7 +233,7 @@ if app_mode == "Home":
         </ul>
     </div>
     """, unsafe_allow_html=True)
-    st.image("https://cdn.activestate.com/wp-content/uploads/2018/10/machine-learning-healthcare-blog-hero-1200x799.jpg", use_column_width=True)
+    st.image("https://cdn.activestate.com/wp-content/uploads/2018/10/machine-learning-healthcare-blog-hero-1200x799.jpg", use_container_width=True)
 
 elif app_mode == "Diabetes":
     st.header("Diabetes Prediction")
