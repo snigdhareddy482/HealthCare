@@ -17,6 +17,7 @@ import sklearn.ensemble
 import sklearn.neighbors
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
+import plotly.graph_objects as go
 
 # --- Comprehensive Legacy Model Support ---
 # These patches allow models trained on older scikit-learn/joblib versions (circa 2018-2020)
@@ -130,6 +131,34 @@ def get_heart_scaler():
     except Exception as e:
         # If heart.csv is missing or error, return None (fallback to raw)
         return None
+
+def plot_health_gauge(value, title, min_val, max_val, safe_range):
+    """
+    Creates a Gauge Chart using Plotly.
+    safe_range: tuple (min_safe, max_safe) - values inside are Green, outside are Red/Yellow.
+    """
+    fig = go.Figure(go.Indicator(
+        mode = "gauge+number",
+        value = value,
+        domain = {'x': [0, 1], 'y': [0, 1]},
+        title = {'text': title},
+        gauge = {
+            'axis': {'range': [min_val, max_val]},
+            'bar': {'color': "darkblue"},
+            'steps': [
+                {'range': [min_val, safe_range[0]], 'color': "#FF4B4B"}, # Red (Low)
+                {'range': [safe_range[0], safe_range[1]], 'color': "#29B09D"}, # Green (Safe)
+                {'range': [safe_range[1], max_val], 'color': "#FF4B4B"}  # Red (High)
+            ],
+            'threshold': {
+                'line': {'color': "black", 'width': 4},
+                'thickness': 0.75,
+                'value': value
+            }
+        }
+    ))
+    fig.update_layout(height=250, margin=dict(l=10, r=10, t=40, b=10))
+    return fig
 
 class ManualScaler:
     def __init__(self, mean, std):
@@ -262,6 +291,25 @@ elif app_mode == "Diabetes":
         else:
             st.markdown('<div class="result-box safe">No Diabetes Detected</div>', unsafe_allow_html=True)
             st.balloons()
+        
+        # --- Visualization Dashboard ---
+        st.divider()
+        st.subheader("🔍 Health Analysis")
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            # Glucose Gauge (Normal: ~70-140 mg/dL for random/fasting mix)
+            st.plotly_chart(plot_health_gauge(glucose, "Glucose Level", 0, 300, (70, 140)), use_container_width=True)
+            
+        with col2:
+            # BMI Gauge (Normal: 18.5-25)
+            st.plotly_chart(plot_health_gauge(bmi, "BMI Index", 10, 50, (18.5, 25)), use_container_width=True)
+            
+        if bmi > 25:
+             st.info("💡 **Tip**: Your BMI indicates you might be overweight. Regular exercise can help lower risk.")
+        if glucose > 140:
+             st.info("💡 **Tip**: Glucose levels above 140 mg/dL can be a sign of pre-diabetes. Consult a doctor.")
+        # -------------------------------
 
 elif app_mode == "Heart Disease":
     st.header("Heart Disease Prediction")
@@ -303,6 +351,25 @@ elif app_mode == "Heart Disease":
         else:
             st.markdown('<div class="result-box safe">Healthy Heart Status</div>', unsafe_allow_html=True)
             st.balloons()
+
+        # --- Visualization Dashboard ---
+        st.divider()
+        st.subheader("❤️ Cardiac Health Analysis")
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            # BP Gauge (Normal: <120 systolic. Warning up to 140)
+            st.plotly_chart(plot_health_gauge(trestbps, "Resting Blood Pressure", 80, 200, (90, 120)), use_container_width=True)
+            
+        with col2:
+            # Cholesterol Gauge (Normal: <200)
+            st.plotly_chart(plot_health_gauge(chol, "Cholesterol", 100, 400, (125, 200)), use_container_width=True)
+            
+        if trestbps > 130:
+             st.info("💡 **Tip**: Elevated blood pressure significantly increases heart strain.")
+        if chol > 200:
+             st.info("💡 **Tip**: High cholesterol is a major risk factor. Consider a low-fat diet.")
+        # -------------------------------
 
 elif app_mode == "Kidney Disease":
     st.header("Kidney Disease Prediction")
