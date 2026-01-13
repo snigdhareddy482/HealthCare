@@ -107,7 +107,9 @@ def load_models():
         models['liver'] = joblib.load("model4")
         models['heart'] = joblib.load("model2")
     except Exception as e:
+        import traceback
         st.error(f"Error loading models: {e}")
+        st.code(traceback.format_exc())
     return models
 
 models = load_models()
