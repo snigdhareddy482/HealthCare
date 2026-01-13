@@ -192,6 +192,9 @@ def get_liver_scaler():
 
 # Prediction Functions
 def predict_malaria(img, model):
+    img = img.resize((50, 50))
+    img_array = image.img_to_array(img)
+    img_array = np.expand_dims(img_array, axis=0)
     img_array = img_array / 255.0
     predicted = model.predict(img_array)
     return predicted
@@ -380,14 +383,17 @@ elif app_mode == "Kidney Disease":
             appet = st.selectbox("Appetite", options=[("Good", 1), ("Poor", 0)], format_func=lambda x: x[0])
 
     if st.button("Predict Kidney Disease"):
-        input_data = [agek, bpk, al, pcc[1], bgr, bu, sc, hemo, pcv, htn[1], dm[1], appet[1]]
-        prediction = predict_structured(models['kidney'], input_data)
-        
-        if prediction == 1:
-            st.markdown('<div class="result-box danger">Kidney Disease Detected</div>', unsafe_allow_html=True)
+        if models['kidney'] is None:
+             st.error("Model unavailable: 'model3' (Kidney) could not be loaded. Attempting regeneration...")
         else:
-            st.markdown('<div class="result-box safe">Healthy Kidney Status</div>', unsafe_allow_html=True)
-            st.balloons()
+            input_data = [agek, bpk, al, pcc[1], bgr, bu, sc, hemo, pcv, htn[1], dm[1], appet[1]]
+            prediction = predict_structured(models['kidney'], input_data)
+            
+            if prediction == 1:
+                st.markdown('<div class="result-box danger">Kidney Disease Detected</div>', unsafe_allow_html=True)
+            else:
+                st.markdown('<div class="result-box safe">Healthy Kidney Status</div>', unsafe_allow_html=True)
+                st.balloons()
 
 elif app_mode == "Liver Disease":
     st.header("Liver Disease Prediction")
@@ -408,17 +414,20 @@ elif app_mode == "Liver Disease":
             ag_ratio = st.number_input("Albumin/Globulin Ratio", min_value=0.0)
 
     if st.button("Predict Liver Disease"):
-        input_data = [agel, gen[1], tb, db, ap, aa1, aa2, tp, alb, ag_ratio]
-        
-        scaler = get_liver_scaler()
-        prediction = predict_structured(models['liver'], input_data, scaler=scaler)
-        
-        if prediction == 1:
-            st.markdown('<div class="result-box danger">Liver Disease Detected</div>', unsafe_allow_html=True)
-            st.warning("Prediction based on statistical averages from the Indian Liver Patient Dataset.")
+        if models['liver'] is None:
+            st.error("Model unavailable: 'model4' (Liver) could not be loaded. Dataset 'indian_liver_patient.csv' missing for regeneration.")
         else:
-            st.markdown('<div class="result-box safe">Healthy Liver Status</div>', unsafe_allow_html=True)
-            st.balloons()
+            input_data = [agel, gen[1], tb, db, ap, aa1, aa2, tp, alb, ag_ratio]
+            
+            scaler = get_liver_scaler()
+            prediction = predict_structured(models['liver'], input_data, scaler=scaler)
+            
+            if prediction == 1:
+                st.markdown('<div class="result-box danger">Liver Disease Detected</div>', unsafe_allow_html=True)
+                st.warning("Prediction based on statistical averages from the Indian Liver Patient Dataset.")
+            else:
+                st.markdown('<div class="result-box safe">Healthy Liver Status</div>', unsafe_allow_html=True)
+                st.balloons()
 
 elif app_mode == "Generate Cancer":
     st.header("Breast Cancer Prediction")
