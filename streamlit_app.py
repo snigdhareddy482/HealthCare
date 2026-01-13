@@ -140,6 +140,31 @@ class ManualScaler:
         return (np.array(X) - self.mean) / self.scale
 
 @st.cache_resource
+def load_models():
+    models = {}
+    
+    def load_single_model(name, path, is_joblib=False):
+        try:
+            if is_joblib:
+                return joblib.load(path)
+            else:
+                return load_model(path)
+        except Exception as e:
+            # Log error but don't crash app
+            print(f"Failed to load {name}: {e}")
+            return None
+
+    models['malaria'] = load_single_model('malaria', 'model111.h5')
+    models['pneumonia'] = load_single_model('pneumonia', 'my_model.h5')
+    models['diabetes'] = load_single_model('diabetes', 'model1', is_joblib=True)
+    models['cancer'] = load_single_model('cancer', 'model', is_joblib=True)
+    models['kidney'] = load_single_model('kidney', 'model3', is_joblib=True)
+    models['liver'] = load_single_model('liver', 'model4', is_joblib=True)
+    models['heart'] = load_single_model('heart', 'model2', is_joblib=True)
+    
+    return models
+
+@st.cache_resource
 def get_liver_scaler():
     # Statistical averages from Indian Liver Patient Dataset
     # Features: Age, Gender, TB, DB, Alkphos, Sgpt, Sgot, TP, ALB, A/G Ratio
@@ -150,9 +175,6 @@ def get_liver_scaler():
 
 # Prediction Functions
 def predict_malaria(img, model):
-    img = img.resize((50, 50))
-    img_array = image.img_to_array(img)
-    img_array = np.expand_dims(img_array, axis=0)
     img_array = img_array / 255.0
     predicted = model.predict(img_array)
     return predicted
