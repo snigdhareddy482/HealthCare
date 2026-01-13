@@ -2,6 +2,10 @@ import streamlit as st
 import numpy as np
 import os
 from PIL import Image
+
+# Force legacy Keras for compatibility with old .h5 models
+os.environ['TF_USE_LEGACY_KERAS'] = '1'
+
 import tensorflow as tf
 from tensorflow.keras.models import load_model # type: ignore
 from tensorflow.keras.preprocessing import image # type: ignore
