@@ -140,7 +140,7 @@ def upload_file():
             indices = {0: 'PARASITIC', 1: 'Uninfected', 2: 'Invasive carcinomar', 3: 'Normal'}
             result = predict_malaria(full_name)
             
-            # Modernize numpy usage: item() instead of asscalar
+            # Modernize numpy: use .item() instead of asscalar if needed, though argmax returns int usually.
             predicted_class = np.argmax(result, axis=1).item()
             accuracy = round(result[0][predicted_class] * 100, 2)
             label = indices[predicted_class]

@@ -10,7 +10,7 @@ from sklearn.linear_model import LogisticRegression
 import joblib
 
 data=pd.read_csv("indian_liver_patient.csv")
-data=data.fillna(method="ffill")
+data=data.ffill()
 data.Gender=data.Gender.map({"Female":1,"Male":0})
 data["Dataset"]=data["Dataset"].map({1:0,2:1})
 np.random.shuffle(data.values)
@@ -25,7 +25,7 @@ sc=StandardScaler()
 lr=LogisticRegression()
 source=sc.fit_transform(source)
 X_train,X_test,y_train,y_test= train_test_split(source,target,test_size=0.01)
-X_train, y_train=sm.fit_sample(X_train,y_train)
+X_train, y_train=sm.fit_resample(X_train,y_train)
 cv=cross_validate(lr,X_train,y_train,cv=10)
 lr.fit(X_train,y_train)
 print(cv)
