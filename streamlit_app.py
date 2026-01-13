@@ -12,11 +12,24 @@ from tensorflow.keras.preprocessing import image # type: ignore
 import joblib
 import sys
 import sklearn.linear_model
+import sklearn.tree
+import sklearn.ensemble
+import sklearn.neighbors
 
-# Monkey-patch for loading old scikit-learn models (0.21.x)
-# Redirects the old path 'sklearn.linear_model.logistic' to the new location.
+# --- Comprehensive Legacy Model Support ---
+# These patches allow models trained on older scikit-learn/joblib versions (circa 2018-2020)
+# to load in modern environments (2024+).
+
+# 1. Patch 'sklearn.externals.joblib' -> 'joblib'
+if "sklearn.externals.joblib" not in sys.modules:
+    sys.modules["sklearn.externals.joblib"] = joblib
+
+# 2. Patch renamed/moved modules in scikit-learn
 sys.modules['sklearn.linear_model.logistic'] = sklearn.linear_model
-sys.modules['sklearn.tree.tree'] = sklearn.tree # Common fix for old Tree models too, just in case
+sys.modules['sklearn.tree.tree'] = sklearn.tree
+sys.modules['sklearn.ensemble.forest'] = sklearn.ensemble
+sys.modules['sklearn.neighbors.classification'] = sklearn.neighbors
+# ------------------------------------------
 
 # Page Config
 st.set_page_config(
