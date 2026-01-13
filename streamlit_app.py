@@ -10,6 +10,13 @@ import tensorflow as tf
 from tensorflow.keras.models import load_model # type: ignore
 from tensorflow.keras.preprocessing import image # type: ignore
 import joblib
+import sys
+import sklearn.linear_model
+
+# Monkey-patch for loading old scikit-learn models (0.21.x)
+# Redirects the old path 'sklearn.linear_model.logistic' to the new location.
+sys.modules['sklearn.linear_model.logistic'] = sklearn.linear_model
+sys.modules['sklearn.tree.tree'] = sklearn.tree # Common fix for old Tree models too, just in case
 
 # Page Config
 st.set_page_config(
