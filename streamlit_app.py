@@ -96,22 +96,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Load Models (Cached)
-@st.cache_resource
-def load_models():
-    models = {}
-    try:
-        models['malaria'] = load_model('model111.h5')
-        models['pneumonia'] = load_model('my_model.h5')
-        models['diabetes'] = joblib.load("model1")
-        models['cancer'] = joblib.load("model")
-        models['kidney'] = joblib.load("model3")
-        models['liver'] = joblib.load("model4")
-        models['heart'] = joblib.load("model2")
-    except Exception as e:
-        st.error(f"Error loading models: {e}")
-    return models
 
-models = load_models()
 
 # Scaler Helpers
 @st.cache_resource
