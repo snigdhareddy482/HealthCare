@@ -7,7 +7,7 @@ from sklearn.model_selection import cross_validate
 from imblearn.over_sampling import SMOTE
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
-from sklearn.externals import joblib
+import joblib
 
 data=pd.read_csv("indian_liver_patient.csv")
 data=data.fillna(method="ffill")
