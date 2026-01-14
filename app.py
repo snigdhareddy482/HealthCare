@@ -21,8 +21,8 @@ if not os.path.exists(UPLOAD_FOLDER):
 # Using global variables for models. Note: In production, consider lazy loading or a serving infrastructure.
 try:
     print("Loading models...")
-    model_malaria = load_model('model111.h5')
-    model_pneumonia = load_model('my_model.h5')
+    model_malaria = load_model('model111.h5', compile=False)
+    model_pneumonia = load_model('my_model.h5', compile=False)
     
     # Models for structured data (Heart, Diabetes, etc.)
     # These rely on joblib for sklearn models

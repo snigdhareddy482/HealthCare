@@ -163,7 +163,7 @@ def load_models():
             if is_joblib:
                 return joblib.load(path)
             else:
-                return load_model(path)
+                return load_model(path, compile=False) # compile=False avoids optimizer mismatch for inference
         except Exception as e:
             # Log error but don't crash app
             print(f"Failed to load {name}: {e}")
