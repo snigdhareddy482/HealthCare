@@ -419,8 +419,8 @@ elif app_mode == "Liver Disease":
         else:
             input_data = [agel, gen[1], tb, db, ap, aa1, aa2, tp, alb, ag_ratio]
             
-            scaler = get_liver_scaler()
-            prediction = predict_structured(models['liver'], input_data, scaler=scaler)
+            # scaler = get_liver_scaler() # Removed scaling to match new synthetic model trained on raw data
+            prediction = predict_structured(models['liver'], input_data) #, scaler=scaler)
             
             if prediction == 1:
                 st.markdown('<div class="result-box danger">Liver Disease Detected</div>', unsafe_allow_html=True)
