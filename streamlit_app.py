@@ -10,6 +10,9 @@ import tensorflow as tf
 from tensorflow.keras.models import load_model # type: ignore
 from tensorflow.keras.preprocessing import image # type: ignore
 import joblib
+
+# Fix Autograph/Graph execution errors on Streamlit Cloud
+tf.config.run_functions_eagerly(True)
 import sys
 import sklearn.linear_model
 import sklearn.tree
